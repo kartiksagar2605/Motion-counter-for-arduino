@@ -1,0 +1,48 @@
+#include <LiquidCrystal.h>
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+int ledPin = 13;
+int pirPin = 10; 
+int pirState = LOW; // we start, assuming no motion detected
+int val = 0; // variable for reading the pin status
+int counter = 0;
+int currentState = 0;
+int previousState = 0;
+
+void setup() {
+pinMode(ledPin, OUTPUT); // declare LED as output
+pinMode(pirPin, INPUT); // declare sensor as input
+ lcd.begin(16, 2);
+ lcd.setCursor(4, 0);
+ lcd.print("counter");
+}
+void loop(){
+val = digitalRead(pirPin); // read PIR sensor input value
+if (val == HIGH) { // check if the input is HIGH
+digitalWrite(ledPin, HIGH); // turn LED ON
+if (pirState == LOW) {
+// we have just turned on
+currentState = 1;
+// We only want to print on the output change, not state
+pirState = HIGH;
+delay(1000);
+  }
+} else {
+digitalWrite(ledPin, LOW); // turn LED OFF
+if (pirState == HIGH){
+// we have just turned of
+currentState = 0;
+// We only want to print on the output change, not state
+pirState = LOW;
+  }
+ }
+if(currentState != previousState){
+if(currentState == 1){
+counter = counter + 1;
+lcd.setCursor(4,1);
+lcd.print(counter);
+delay(2000);
+  }
+ }
+}
